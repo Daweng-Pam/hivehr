@@ -84,9 +84,9 @@ class AuthManager extends Controller
                 Auth::login($user);
         
                 // Attach the user to the company
-        $company = Company::findOrFail($invitation->company_id);
-        $user = auth()->user();
-        $role_id = 1; // Default role ID
+                $company = Company::findOrFail($invitation->companies);
+                $user = auth()->user();
+                $role_id = 1; // Default role ID
         $company->users()->attach($user->id, ['role_id' => $role_id]);
         
                 return redirect()->route('dashboard')->with('success', 'Registration successful!');
@@ -179,7 +179,7 @@ class AuthManager extends Controller
     public function showInviteForm($companyId)
     {
     
-        $company = Company::findOrFail($companyId);
+        $company = Company::findOr($companyId);
         $roles = Role::all();
     
         return view('send_invitation', compact('company', 'roles'));
@@ -210,6 +210,19 @@ class AuthManager extends Controller
         
     }
 
+    // In CompanyController
+public function getCompanyById($id)
+{
+    $company = Company::find($id);
+
+    if (!$company) {
+        return response()->json(['error' => 'Company not found'], 404);
+    }
+
+    return response()->json($company);
+}
+
+
     public function acceptInvitation($token)
     {
     $invitation = Invitation::where('token', $token)->firstOrFail();
@@ -220,8 +233,12 @@ class AuthManager extends Controller
             'email' => $invitation->email,
             'role_id' => $invitation->role,
             'company' => $company,
+            'company_id' => Company::findOrFail($invitation->companies),
             'token' => $token,
-        ])->with('token', $token);
+        ])->with([
+            'token' => $token,
+            'key' => 1010
+        ]);
 
     }
 }

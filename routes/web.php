@@ -23,14 +23,12 @@ Route::post('/user-register', [AuthManager::class, 'register'])->name('register.
 Route::get('/create-company', [AuthManager::class, 'create'])->name('company.create');
 Route::post('/store-company', [AuthManager::class, 'store_company'])->name('company.store');
 
-// accept invitation route
-Route::get('/accept-invitation/{token}', [AuthManager::class, 'acceptInvitation'])->name('company.acceptInvitation');
 
 // Send invitation route
 Route::get('/companies/{companyId}/invite', [AuthManager::class, 'showInviteForm'])->name('company.showInviteForm');
 Route::post('/send-invitation/{companyId}', [AuthManager::class, 'invite'])->name('company.invite');
 
-Route::get('/companies/{id}', [CompanyController::class, 'getCompanyById']);
+Route::get('/companies/{id}', [AuthManager::class, 'getCompanyById']);
 
 
 Route::get('/test-mail', function () {
@@ -52,7 +50,7 @@ Route::get('/dashboard', [AuthManager::class, 'dashboard'])->name('dashboard')->
 
 // Search and filter companies
 Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
-Route::get('/companies/export', [CompanyController::class, 'export'])->name('companies.export');
+Route::get('/export', [CompanyController::class, 'export'])->name('companies.export');
 
 
 // Projects
